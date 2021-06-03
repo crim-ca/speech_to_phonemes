@@ -112,7 +112,7 @@ List of provided data, with their code and their corresponding language :
 * tvk : Vatlongo
 
 # Credits
-Researcher : Gilles Bouliane
+Researcher : Gilles Boulianne
 
 Developer : Charles-William Cummings
 
