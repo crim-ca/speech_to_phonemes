@@ -102,6 +102,15 @@ The data found on this repository comes from the [sltu_corpora repository](https
 The transcription files have been converted to .eaf files ([ELAN](https://archive.mpi.nl/tla/elan) Annotation Format)
 and divided in train/dev sets. The original data comes from the [Pangloss collection](https://pangloss.cnrs.fr/).
 
+List of provided data, with their code and their corresponding language :
+* ers : Duoxo
+* lif : Limbu
+* mkd : Nashta
+* mlv : Mwotlap
+* nep : Dotyal
+* nru / nru33 : Yongnin Na
+* tvk : Vatlongo
+
 # Credits
 Researcher : Gilles Bouliane
 
