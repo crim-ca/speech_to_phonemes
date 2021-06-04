@@ -1,10 +1,14 @@
 # speech_to_phonemes
 
 # Description
-This repository contains example data to use with the [speech_to_phonemes image](https://hub.docker.com/r/crimca/speech_to_phonemes).
-The speech_to_phonemes service consists in a phonetic transcriber, which can train a model that can transcribe
-an audio speech recording to a time-aligned list of IPA phonemes. The model can be trained for any language, as long as
+This repository contains example data to use with the [speech_to_phonemes docker image](https://hub.docker.com/r/crimca/speech_to_phonemes).
+The speech_to_phonemes service consists in a phonetic transcriber that can be trained to transcribe
+an audio speech recording to a time-aligned list of IPA phonemes. Its goal is to allow someone to automatically
+do phonetic transcription of large amounts of audio recordings from a single
+speaker, starting with only a small amount of already transcribed recordings
+from the same speaker. The model can be trained for any language, as long as
 the user provides the required data.
+More details can be found in the following paper: [link to arXiv paper].
 
 # Installation
 The service is run directly from a Docker image.
@@ -13,6 +17,9 @@ You can pull the [speech_to_phonemes](https://hub.docker.com/r/crimca/speech_to_
 
 # Usage
 The service can be executed in two different modes : the training or the decoding mode.
+In training mode, the model is trained and then evaluated on a separate
+development set, and optionnally saved for later use.
+In decoding mode, a saved model is applied to transcribe audio recordings.
 
 ### Training mode :
 Trains a phonetic transcriber model, which can be reused in the decoding mode.
@@ -20,18 +27,22 @@ The data required for training must be formatted in .eaf files ([ELAN](https://a
 Optional text (.txt) files can also be used to improve the model.
 The user must also provide a g2p table (grapheme-to-phoneme table) according to the language being processed.
 
-usage : 
+usage :
 ```
-docker run speech_to_phonemes:0.1.0 train 
+docker run crimca/speech_to_phonemes:0.1.0 train
                 --train_dir TRAIN_DIR --dev_dir DEV_DIR
                 [--wav_dir WAV_DIR] [--model_output_dir MODEL_OUTPUT_DIR]
                 --g2p G2P [--skip_tokens SKIP_TOKENS [SKIP_TOKENS ...]]
                 [--number_jobs NUMBER_JOBS]
 ```
 
+Note that `train_dir`, `dev_dir`, etc. are directories internal to the running
+docker container. Use the docker --volume option to mount host directories so
+they are visible inside the container (see step-by-step example below).
+
 #### Required arguments :
 `train_dir` : Directory containing the training data, which should consist of .eaf files and optional text (.txt) files.
-Make sure to only put files used as training data in this directory. 
+Make sure to only put files used as training data in this directory.
 
 `dev_dir` : Directory containing the testing data, which should consist of .eaf files and optional text (.txt) files.
 Make sure to only put files used as testing data in this directory.
@@ -49,7 +60,7 @@ input eaf files. This directory should contain both the train and dev audio file
 an eaf file and its audio file will be deduced from the MEDIA_DESCRIPTOR info found in the eaf file. The
 wav path will either be found from the relative path found in the descriptor combined with the wav_dir
 argument path, or, if no relative path is found, the wav filename, found in the absolute path, will be used
-to look for the file directly in the wav_dir path. 
+to look for the file directly in the wav_dir path.
 
 If this argument is not included, the absolute path found in the eaf file's descriptor will be used to find the wav file.
 
@@ -69,9 +80,9 @@ parallel with Kaldi. (Default = 1, which represents no data splitting)
 Uses a model obtained from the training mode to transcribe an audio file to an IPA phonetic transcription.
 The output will be saved into an eaf file.
 
-usage : 
+usage :
 ```
-docker run speech_to_phonemes:0.1.0 decode 
+docker run crimca/speech_to_phonemes:0.1.0 decode
                 [-s SEGMENTS_FILENAME] [--model_dir MODEL_DIR]
                 [--output_dir OUTPUT_DIR] [--number_jobs NUMBER_JOBS]
                 wav_file
@@ -82,9 +93,9 @@ docker run speech_to_phonemes:0.1.0 decode
 
 #### Optional arguments :
 `s` (segments) : Path to a file containing a list of segments. The file must use the Kaldi syntax for segments
-files : 
+files :
 `<speaker_id> <wav_filename> <segment_start_time> <segment_end_time>`
-Providing a segments file will skip the Voice Activity Detection (VAD) step, which would create a list of segments where 
+Providing a segments file will skip the Voice Activity Detection (VAD) step, which would create a list of segments where
 speech is detected.
 
 `model_dir` : Path where the model used for decoding the audio file is found. This path is equivalent to the
@@ -97,8 +108,59 @@ of the input wav file.
 `number_jobs` : If multiple cores are available, the data can be split in the number_jobs defined here to do processing in
 parallel with Kaldi.(Default = 1, which represents no data splitting)
 
+## Step-by-step example
+
+1. Clone this repo and go to its root.
+
+```
+cd speech_to_phonemes
+```
+
+2. Select a language by its id.
+
+```
+lid=mlv
+```
+
+3. Run training and evaluation (without saving the model).
+
+```
+docker run -v `pwd`/data:/mnt/wdir crimca/speech_to_phonemes:0.1.0 train \
+                                --train_dir /mnt/wdir/$lid/train_$lid \
+                                --dev_dir /mnt/wdir/$lid/dev_$lid \
+                                --wav_dir /mnt/wdir/$lid \
+                                --g2p /mnt/wdir/$lid/g2p_$lid/roman_to_ipa.g2p
+```
+
+Processing logs will be sent to standard output. In the last few lines, `%WER` is the phoneme error rate computed on the development set
+(using Kaldi's compute-wer).
+
+4. To save the model after training, add the `--model_output_dir`option:
+
+```
+docker run -v `pwd`/data:/mnt/wdir crimca/speech_to_phonemes:0.1.0 train \
+                                --train_dir /mnt/wdir/$lid/train_$lid \
+                                --dev_dir /mnt/wdir/$lid/dev_$lid \
+                                --wav_dir /mnt/wdir/$lid \
+                                --g2p /mnt/wdir/$lid/g2p_$lid/roman_to_ipa.g2p \
+                                --model_output_dir /mnt/wdir/model_$lid
+```
+
+The model, along with detailed logs and intermediate results, will be saved in `data/model_$lid`.
+
+5. To apply the saved model to some audio recordings, use the decode mode:
+
+```
+docker run -v `pwd`/data:/mnt/wdir crimca/speech_to_phonemes:0.1.0 decode \
+                                --model_dir /mnt/wdir/model_$lid \
+                                /mnt/wdir/$lid/dev_$lid/147721_record_22km.101.wav
+```
+
+The file will be segmented into speaking turns and the phoneme transcription will be saved as an ELAN .eaf file in the same directory as the wave file.
+
+
 # Data
-The data found on this repository comes from the [sltu_corpora repository](https://github.com/gw17/sltu_corpora). 
+The data found on this repository comes from the [sltu_corpora repository](https://github.com/gw17/sltu_corpora).
 The transcription files have been converted to .eaf files ([ELAN](https://archive.mpi.nl/tla/elan) Annotation Format)
 and divided in train/dev sets. The original data comes from the [Pangloss collection](https://pangloss.cnrs.fr/).
 
@@ -111,10 +173,14 @@ List of provided data, with their code and their corresponding language :
 * nru / nru33 : Yongnin Na
 * tvk : Vatlongo
 
+For each language, training and development sets of .eaf files and corresponding audio files are provided. A simple grapheme-to-phoneme (g2p) table is provided to convert text annotations found in the .eaf files to phonemes. 
+
 # Credits
-Researcher : Gilles Boulianne
+Researcher : Gilles Boulianne and Vishwa Gupta
 
 Developer : Charles-William Cummings
 
 # License
 Copyright 2021 Centre de recherche informatique de Montréal (CRIM)
+
+If you find this software useful please cite our paper: [arXiv citation].
