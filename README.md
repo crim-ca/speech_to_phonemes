@@ -122,20 +122,7 @@ cd speech_to_phonemes
 lid=mlv
 ```
 
-3. Run training and evaluation (without saving the model).
-
-```
-docker run -v `pwd`/data:/mnt/wdir crimca/speech_to_phonemes:0.1.0 train \
-                                --train_dir /mnt/wdir/$lid/train_$lid \
-                                --dev_dir /mnt/wdir/$lid/dev_$lid \
-                                --wav_dir /mnt/wdir/$lid \
-                                --g2p /mnt/wdir/$lid/g2p_$lid/roman_to_ipa.g2p
-```
-
-Processing logs will be sent to standard output. In the last few lines, `%WER` is the phoneme error rate computed on the development set
-(using Kaldi's compute-wer).
-
-4. To save the model after training, add the `--model_output_dir`option:
+3. Run training and evaluation.
 
 ```
 docker run -v `pwd`/data:/mnt/wdir crimca/speech_to_phonemes:0.1.0 train \
@@ -146,9 +133,15 @@ docker run -v `pwd`/data:/mnt/wdir crimca/speech_to_phonemes:0.1.0 train \
                                 --model_output_dir /mnt/wdir/model_$lid
 ```
 
-The model, along with detailed logs and intermediate results, will be saved in `data/model_$lid`.
+The `--model_output_dir` option is used to save the model after training, but it is optional.
+In this example, the model, along with detailed logs and intermediate results, will be saved in `data/model_$lid`.
+If the option is omitted, the resulting files will be saved only on the container, 
+in the default path `/stp/speech_to_phonemes/kaldi_scripts`.
 
-5. To apply the saved model to some audio recordings, use the decode mode:
+Processing logs will be sent to standard output. In the last few lines, `%WER` is the phoneme error rate computed on the development set
+(using Kaldi's compute-wer).
+
+4. To apply the saved model to some audio recordings, use the decode mode:
 
 ```
 docker run -v `pwd`/data:/mnt/wdir crimca/speech_to_phonemes:0.1.0 decode \
