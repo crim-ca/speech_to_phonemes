@@ -8,7 +8,8 @@ do phonetic transcription of large amounts of audio recordings from a single
 speaker, starting with only a small amount of already transcribed recordings
 from the same speaker. The model can be trained for any language, as long as
 the user provides the required data.
-More details can be found in the following paper: [link to arXiv paper].
+More details can be found in the paper: [Phoneme transcription of endangered languages: an evaluation of recent
+ASR architectures in the single speaker scenario](https://aclanthology.org/2022.findings-acl.180).
 
 # Installation
 The service is run directly from a Docker image.
