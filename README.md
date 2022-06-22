@@ -177,4 +177,5 @@ Developer : Charles-William Cummings
 # License
 Copyright 2021 Centre de recherche informatique de Montréal (CRIM)
 
-If you find this software useful please cite our paper: [arXiv citation].
+If you find this software useful please cite our paper: [Phoneme transcription of endangered languages: an evaluation of recent
+ASR architectures in the single speaker scenario](https://aclanthology.org/2022.findings-acl.180).
