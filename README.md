@@ -154,11 +154,14 @@ The file will be segmented into speaking turns and the phoneme transcription wil
 
 
 # Data
-The data found on this repository comes from the [sltu_corpora repository](https://github.com/gw17/sltu_corpora).
-The transcription files have been converted to .eaf files ([ELAN](https://archive.mpi.nl/tla/elan) Annotation Format)
-and divided in train/dev sets. The original data comes from the [Pangloss collection](https://pangloss.cnrs.fr/).
+The data for seven languages found in this repository comes from the [sltu_corpora repository](https://github.com/gw17/sltu_corpora), which originally comes from the [Pangloss collection](https://pangloss.cnrs.fr/). The data for the remaining languages has been downloaded directly from the [Pangloss collection](https://pangloss.cnrs.fr/) 
 
-List of provided data, with their code and their corresponding language :
+All transcription files have been converted to .eaf files ([ELAN](https://archive.mpi.nl/tla/elan) Annotation Format) and divided in train/dev sets.  
+
+**List of provided data, with their code and their corresponding language :**
+
+**From the [sltu_corpora repository](https://github.com/gw17/sltu_corpora) :**
+
 * ers : Duoxo
 * lif : Limbu
 * mkd : Nashta
@@ -167,7 +170,70 @@ List of provided data, with their code and their corresponding language :
 * nru / nru33 : Yongnin Na
 * tvk : Vatlongo
 
+**Directly from the [Pangloss collection](https://pangloss.cnrs.fr/):**
+
+* abz : Abzakh 
+* bhj : Bahing
+* ers / ers2 : Ersu
+* hiw : Hiw
+* kkt : Koyi Rai 
+* lrz : Lemerig 
+* msn : Mwesen
+* nee : Nêlêmwa-nixumwak
+* nmk : Namakura
+* olr : Olrat
+* slr : Salar
+* swb : Maore
+* tdh : Thulung Rai
+* tkw : Teanu
+* wls : East Uvean
+
 For each language, training and development sets of .eaf files and corresponding audio files are provided. A simple grapheme-to-phoneme (g2p) table is provided to convert text annotations found in the .eaf files to phonemes. 
+
+# Results: 
+The following section presents the phoneme error rate (%PER) for languages in both datasets, ordered by decreasing amount of audio used in training. The average gives equal weight to every language.
+
+### Results for the dataset from the [sltu corpora repository](https://github.com/gw17/sltu_corpora) :
+
+For each language of this dataset, training was done with 10 different random train/test partitions and the Student's t 95% uncertainty intervals were computed and presented in the %PER section.  
+
+
+| Language<br>code | IPA    | Audio<br>(minutes) | %PER<br>HMM-GMM |
+| ---------------- | -----  | ------------------ | --------------- |
+| nru33            | True   | 151                | 19.3 ± 1.1      |
+| lif              | True   | 99                 | 30.2 ± 0.9      |
+| nep              | False  | 95                 | 62.0 ± 1.7      |
+| ers              | True   | 29                 | 45.8 ± 1.7      |
+| mkd              | True   | 23                 | 53.1 ± 3.0      |
+| mlv              | False  | 20                 | 28.8 ± 2.6      |
+| tvk              | False  | 13                 | 57.2 ± 3.6      |
+| **Average**      |        | **61.4**           | **42.1 ± 3.7**  |
+
+
+### Results for the dataset extracted directy from the [Pangloss collection](https://pangloss.cnrs.fr/) :
+
+For each language of this dataset, training was done with a single train/set partition.
+
+| Language<br>code | IPA   | Audio<br>(minutes) | %PER<br>HMM-GMM |
+| ---------------- | ----- | ------------------ | --------------- |      
+| kkt              | True  | 75.6               | 28.8            |
+| hiw              | False | 74.7               | 29.3            |
+| wls              | False | 63.0               | 13.2            |
+| nee              | False | 54.9               | 33.2            |
+| tdh              | True  | 35.2               | 29.7            |
+| tkw              | False | 34.5               | 26.1            |
+| lrz              | False | 30.5               | 39.0            |
+| nmk              | False | 28.4               | 44.2            |
+| ers              | False | 26.6               | 43.7            |
+| bhj              | True  | 25.7               | 60.9            |
+| abz              | True  | 24.8               | 45.3            |             
+| swb              | False | 21.9               | 45.1            |
+| msn              | False | 20.5               | 23.7            |
+| slr              | True  | 20.1               | 46.4            |
+| olr              | False | 17.7               | 42.4            |
+| **Average**      |       | **36.1**           | **36.7**        |
+
+
 
 # Credits
 Researcher : Gilles Boulianne and Vishwa Gupta
