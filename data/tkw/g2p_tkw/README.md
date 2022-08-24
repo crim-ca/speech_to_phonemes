@@ -5,8 +5,8 @@ They were obtained by extracting all the unique IPA symbols used in the transcri
 
 The two tables differ by how labialization is handled:
 
-* **roman_to_ipa :**  lists labialized stops as two separate phonemes
-  * For example [pw] is transcribed as [p w]
+* **roman_to_ipa :**  lists labialized stops as two separate phonemes.
+  * For example, [pw] is transcribed as [p w]
 
-* **roman_to_ipa2 :** lists liabialized stops as one phoneme using a diacritic:
- * For example [pw] is transcribed as [pʷ]
+* **roman_to_ipa2 :** lists liabialized stops as one phoneme using the diacritic [ʷ].
+  * For example, [pw] is transcribed as [pʷ]
