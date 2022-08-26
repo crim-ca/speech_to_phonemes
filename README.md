@@ -236,7 +236,7 @@ For each language of this dataset, training was done with a single train/set par
 
 
 # Credits
-Researcher : Gilles Boulianne and Vishwa Gupta
+Researchers : Gilles Boulianne, Vishwa Gupta and Lamia Oudni
 
 Developer : Charles-William Cummings
 
